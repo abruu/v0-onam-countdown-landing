@@ -71,12 +71,22 @@ export default function OnamCountdown() {
       <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
         <div className="text-center max-w-4xl mx-auto">
           {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-4xl md:text-6xl font-bold text-yellow-100 mb-4 text-balance">Onam 2025 Countdown</h1>
-            <p className="text-lg md:text-xl text-yellow-200/90 text-pretty">
-              Get ready for the grand Sadhya on September 2, 2025!
-            </p>
-          </div>
+          {isEnded ? (
+            <div className="mb-8">
+              {/* <h1 className="text-4xl md:text-6xl font-bold text-yellow-100 mb-4 text-balance">Onam 2025 Countdown</h1>
+              <p className="text-lg md:text-xl text-yellow-200/90 text-pretty">
+                Get ready for the grand Sadhya on September 2, 2025!
+              </p> */}
+            </div>
+          ) : (
+            <div className="mb-8">
+              <h1 className="text-4xl md:text-6xl font-bold text-yellow-100 mb-4 text-balance">Onam 2025 Countdown</h1>
+              <p className="text-lg md:text-xl text-yellow-200/90 text-pretty">
+                Get ready for the grand Sadhya on September 2, 2025!
+              </p>
+            </div>
+          )}
+
 
           <Card className="bg-white/10 backdrop-blur-md border-white/20 p-8 md:p-12 shadow-2xl hover:bg-white/15 transition-all duration-300 group">
             {isEnded ? (
@@ -98,7 +108,7 @@ export default function OnamCountdown() {
                   </div>
                 </div>
                 <h2 className="text-4xl md:text-6xl font-bold text-yellow-100 mb-4 animate-celebration-expand">
-                  Happy Onam!
+                ആർപ്പോ 2025
                 </h2>
                 <p className="text-xl text-yellow-200">The celebration has begun! 🌺🎉🌺</p>
               </div>
