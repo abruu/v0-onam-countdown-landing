@@ -16,7 +16,7 @@ export default function OnamCountdown() {
   const [mounted, setMounted] = useState(false)
   const [prevTimeLeft, setPrevTimeLeft] = useState<TimeLeft>({ days: 0, hours: 0, minutes: 0, seconds: 0 })
 
-  const targetDate = new Date("2025-09-02T08:00:00+05:30")
+  const targetDate = new Date("2025-08-28T17:14:00+05:30")
 
   useEffect(() => {
     setMounted(true)
