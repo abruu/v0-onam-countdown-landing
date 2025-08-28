@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Card } from "@/components/ui/card"
+import { motion } from "framer-motion"
 
 interface TimeLeft {
   days: number
@@ -10,13 +11,39 @@ interface TimeLeft {
   seconds: number
 }
 
+interface Flower {
+  id: number
+  emoji: string
+  x: number
+  delay: number
+  duration: number
+}
+
 export default function OnamCountdown() {
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({ days: 0, hours: 0, minutes: 0, seconds: 0 })
   const [isEnded, setIsEnded] = useState(false)
   const [mounted, setMounted] = useState(false)
   const [prevTimeLeft, setPrevTimeLeft] = useState<TimeLeft>({ days: 0, hours: 0, minutes: 0, seconds: 0 })
+  const [flowers, setFlowers] = useState<Flower[]>([])
 
-  const targetDate = new Date("2025-09-02T09:00:00+05:30")
+  const targetDate = new Date("2025-09-02T08:00:00+05:30")
+
+  useEffect(() => {
+    const flowerEmojis = ["🌺", "🌸", "🌼", "🏵️"]
+    const initialFlowers: Flower[] = []
+
+    for (let i = 0; i < 80; i++) {
+      initialFlowers.push({
+        id: i,
+        emoji: flowerEmojis[Math.floor(Math.random() * flowerEmojis.length)],
+        x: Math.random() * 100,
+        delay: i * 0.05, // Even smaller delay for better overlap
+        duration: 6 + Math.random() * 2, // Consistent duration range
+      })
+    }
+
+    setFlowers(initialFlowers)
+  }, [])
 
   useEffect(() => {
     setMounted(true)
@@ -47,19 +74,7 @@ export default function OnamCountdown() {
     const timer = setInterval(calculateTimeLeft, 1000)
 
     return () => clearInterval(timer)
-  }, []) // Removed timeLeft from dependency array to fix infinite loop
-
-  const shareCountdown = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: "Onam 2025 Countdown",
-        text: "Join us in celebrating Onam 2025!",
-        url: window.location.href,
-      })
-    } else {
-      navigator.clipboard.writeText(window.location.href)
-    }
-  }
+  }, [])
 
   if (!mounted) {
     return null
@@ -67,26 +82,46 @@ export default function OnamCountdown() {
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-emerald-900 via-amber-800 to-orange-900">
+      <div className="absolute inset-0 pointer-events-none">
+        {flowers.map((flower) => (
+          <motion.div
+            key={flower.id}
+            className="absolute text-3xl"
+            style={{ left: `${flower.x}%` }}
+            initial={{ y: -100, opacity: 1, rotate: 0 }}
+            animate={{
+              y: typeof window !== "undefined" ? window.innerHeight + 100 : 1000,
+              opacity: 1,
+              rotate: [0, 180, 360],
+            }}
+            transition={{
+              duration: flower.duration,
+              delay: flower.delay,
+              repeat: Number.POSITIVE_INFINITY,
+              repeatType: "loop",
+              repeatDelay: 0,
+              ease: "linear",
+              rotate: {
+                duration: flower.duration,
+                ease: "linear",
+              },
+            }}
+          >
+            {flower.emoji}
+          </motion.div>
+        ))}
+      </div>
+
       {/* Main Content */}
       <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
         <div className="text-center max-w-4xl mx-auto">
           {/* Header */}
-          {isEnded ? (
-            <div className="mb-8">
-              {/* <h1 className="text-4xl md:text-6xl font-bold text-yellow-100 mb-4 text-balance">Onam 2025 Countdown</h1>
-              <p className="text-lg md:text-xl text-yellow-200/90 text-pretty">
-                Get ready for the grand Sadhya on September 2, 2025!
-              </p> */}
-            </div>
-          ) : (
-            <div className="mb-8">
-              <h1 className="text-4xl md:text-6xl font-bold text-yellow-100 mb-4 text-balance">Onam 2025 Countdown</h1>
-              <p className="text-lg md:text-xl text-yellow-200/90 text-pretty">
-                Get ready for the grand Sadhya on September 2, 2025!
-              </p>
-            </div>
-          )}
-
+          <div className="mb-8">
+            <h1 className="text-4xl md:text-6xl font-bold text-yellow-100 mb-4 text-balance">Onam 2025 Countdown</h1>
+            <p className="text-lg md:text-xl text-yellow-200/90 text-pretty">
+              Get ready for the grand Sadhya on September 2, 2025!
+            </p>
+          </div>
 
           <Card className="bg-white/10 backdrop-blur-md border-white/20 p-8 md:p-12 shadow-2xl hover:bg-white/15 transition-all duration-300 group">
             {isEnded ? (
@@ -108,7 +143,7 @@ export default function OnamCountdown() {
                   </div>
                 </div>
                 <h2 className="text-4xl md:text-6xl font-bold text-yellow-100 mb-4 animate-celebration-expand">
-                ആർപ്പോ 2025
+                  Happy Onam!
                 </h2>
                 <p className="text-xl text-yellow-200">The celebration has begun! 🌺🎉🌺</p>
               </div>
@@ -158,59 +193,6 @@ export default function OnamCountdown() {
             </span>
           </div>
         </div>
-      </div>
-
-      <div className="absolute inset-0 pointer-events-none">
-        {[...Array(25)].map((_, i) => {
-          const flowers = ["🌺", "🌸", "🌼", "🏵️"]
-          const flower = flowers[i % flowers.length]
-          return (
-            <div
-              key={`rain-${i}`}
-              className="absolute text-2xl animate-flower-rain opacity-80"
-              style={{
-                left: `${Math.random() * 100}%`,
-                animationDelay: `${i * 0.3}s`,
-                animationDuration: `${4 + Math.random() * 3}s`,
-              }}
-            >
-              {flower}
-            </div>
-          )
-        })}
-      </div>
-
-      <div className="absolute inset-0 pointer-events-none">
-        {[...Array(20)].map((_, i) => (
-          <div
-            key={`petal-${i}`}
-            className="absolute text-xl animate-petal-float opacity-70"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${i * 0.8}s`,
-              animationDuration: `${8 + Math.random() * 4}s`,
-            }}
-          >
-            🌼
-          </div>
-        ))}
-      </div>
-
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-20 left-20 w-12 h-16 bg-gradient-to-t from-yellow-600 to-yellow-300 rounded-t-full animate-lamp-glow shadow-lg" />
-        <div
-          className="absolute top-20 right-20 w-12 h-16 bg-gradient-to-t from-yellow-600 to-yellow-300 rounded-t-full animate-lamp-glow shadow-lg"
-          style={{ animationDelay: "1s" }}
-        />
-        <div
-          className="absolute bottom-20 left-20 w-12 h-16 bg-gradient-to-t from-yellow-600 to-yellow-300 rounded-t-full animate-lamp-glow shadow-lg"
-          style={{ animationDelay: "2s" }}
-        />
-        <div
-          className="absolute bottom-20 right-20 w-12 h-16 bg-gradient-to-t from-yellow-600 to-yellow-300 rounded-t-full animate-lamp-glow shadow-lg"
-          style={{ animationDelay: "3s" }}
-        />
       </div>
     </div>
   )
